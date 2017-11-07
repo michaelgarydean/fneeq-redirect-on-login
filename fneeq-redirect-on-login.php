@@ -24,8 +24,8 @@
  * @return	String	$redirect_to	The updated redirect destination URL.
  */
 
-//Register function with Wordpress loading process.
-add_filter( 'admin_init', 'fneeq_redirect_user_on_login', 10, 3 );
+//Modify the $redirect_to value when a user logs in.
+add_filter( 'login_redirect', 'fneeq_redirect_user_on_login', 10, 3 );
 
 function fneeq_redirect_user_on_login( $redirect_to, $request, $user  ) {
 	
@@ -45,14 +45,15 @@ function fneeq_redirect_user_on_login( $redirect_to, $request, $user  ) {
 		
 		//Only redirect if the user is a participant
 		if ( in_array( 'bbp_participant', $user->roles ) ) {
-		
+	
+			var_dump(in_array( 'bbp_participant', $user->roles ));	
 			//Check which forum they belong to.
 			foreach( $redirect_map as $forum_slug  ) {
 
-				//Redirect them to the first forum in the map that is found in their roles.
+				//Redirect them to the first forum that is found in their roles.
 				if( in_array( $forum_slug, (array) $user->roles ) ) {
 					
-					$redirect_to = fneeq_get_forum_uri( $redirect_map[$primary_role] );
+					$redirect_to = fneeq_get_forum_uri( $redirect_map[$forum_slug] );
 					
 					return $redirect_to;				
 				}
@@ -60,7 +61,7 @@ function fneeq_redirect_user_on_login( $redirect_to, $request, $user  ) {
 		}
 	}
 
-	//Redirect the user if
+	//Redirect the user
 	return $redirect_to;
 }
 
