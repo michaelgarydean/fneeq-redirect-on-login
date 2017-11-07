@@ -15,17 +15,19 @@
 /**
  * Redirect a user when they log in to the FNEEQ site to a forum associated with their role.
  *
- * We have assumed the paths to the forums are as follows: 
- * http://fneeqforum.wpdev0.koumbit.net/forums/forum/cegep/
- *
  * @see https://wordpress.org/plugins/bbpress/
  * @TODO need to check that bbpress is active, roles exists, forums exist.
+ * 
+ * @param	String 	$redirect_to	The redirect destination URL.
+ * @param	String 	$request	The requested redirect destination URL.
+ * @param	WP_User	$user		WP_User object if login was successful, WP_Error if not.
+ * @return	String	$redirect_to	The updated redirect destination URL.
  */
 
 //Register function with Wordpress loading process.
-add_action( 'admin_init', 'fneeq_redirect_user_on_login' );
+add_filter( 'admin_init', 'fneeq_redirect_user_on_login', 10, 3 );
 
-function fneeq_redirect_user_on_login() {
+function fneeq_redirect_user_on_login( $redirect_to, $request, $user  ) {
 	
 	/**
 	 * A map of where each role should lead.
@@ -38,25 +40,35 @@ function fneeq_redirect_user_on_login() {
 		'universite'	=> 'universite',
 	);
 
-	//Get the current user object. Returns 0 if no user.
-	//@TODO error checking for no user.
-	$current_user = wp_get_current_user();
+	//Check if there's a user
+	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+		
+		//Only redirect if the user is a participant
+		if ( in_array( 'bbp_participant', $user->roles ) ) {
+		
+			//Check which forum they belong to.
+			foreach( $redirect_map as $forum_slug  ) {
 
-	//Get a list of roles the user is a member of
-	$roles = $current_user->roles;
+				//Redirect them to the first forum in the map that is found in their roles.
+				if( in_array( $forum_slug, (array) $user->roles ) ) {
+					
+					$redirect_to = fneeq_get_forum_uri( $redirect_map[$primary_role] );
+					
+					return $redirect_to;				
+				}
+			}
+		}
+	}
 
-	//For testing, lets just get the first role and see what's up
-	$roles_primary = $roles[0];
-
-	//if( '' )
+	//Redirect the user if
+	return $redirect_to;
 }
 
 /**
  * Return the URI of the requested forum.
  *
- * @return String	The complete URI for the forum.
- *
- * String $forum_slug 	The slug of the forum we are requesting the URI for.
+ * @param	String $forum_slug 	The slug of the forum we are requesting the URI for.
+ * @return 	String $forum_uri	The complete URI for the forum.
  */
 function fneeq_get_forum_uri( $single_forum_slug ) {
 
