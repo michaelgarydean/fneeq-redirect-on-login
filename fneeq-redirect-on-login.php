@@ -15,6 +15,8 @@
 /**
  * Redirect a user when they log in to the FNEEQ site to a forum associated with their role.
  *
+ * Redmine: https://redmine.koumbit.net/issues/24624
+ *
  * @see https://wordpress.org/plugins/bbpress/
  * @TODO need to check that bbpress is active, roles exists, forums exist.
  * 
