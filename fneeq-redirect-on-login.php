@@ -46,9 +46,8 @@ function fneeq_redirect_user_on_login( $redirect_to, $request, $user  ) {
 	if ( isset( $user->roles ) && is_array( $user->roles ) ) {
 		
 		//Only redirect if the user is a participant
-		if ( in_array( 'bbp_participant', $user->roles ) ) {
+		//if ( in_array( 'bbp_participant', $user->roles ) ) {
 	
-			var_dump(in_array( 'bbp_participant', $user->roles ));	
 			//Check which forum they belong to.
 			foreach( $redirect_map as $forum_slug  ) {
 
@@ -60,7 +59,7 @@ function fneeq_redirect_user_on_login( $redirect_to, $request, $user  ) {
 					return $redirect_to;				
 				}
 			}
-		}
+		//}
 	}
 
 	//Redirect the user
