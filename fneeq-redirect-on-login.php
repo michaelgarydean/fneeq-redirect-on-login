@@ -78,8 +78,16 @@ function fneeq_get_forum_uri( $single_forum_slug ) {
 	$site_url = get_site_url();
 
         //Get the slugs set in wp-admin/options-general.php?page=bbpress.
-        $root_slug = get_option( '_bbp_root_slug', 'forums' );
-        $forums_slug = get_option( '_bbp_forum_slug', 'forum' );
+	$forums_slug = get_option( '_bbp_forum_slug', 'forum' );
+	$root_slug = '';
+	
+	/**
+	 * Only add the root slug if it's been set to be included
+	 * redmine #24891
+	 */
+	if( 1 === get_option( '_bbp_include_root', 0 ) ) {
+        	$root_slug = get_option( '_bbp_root_slug', '' );
+        }
 
 	//Build the URI from the site URI.
 	$forum_uri = $site_url . '/' . $root_slug . '/' . $forums_slug . '/' . $single_forum_slug;		
